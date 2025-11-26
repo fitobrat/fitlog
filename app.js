@@ -1,6 +1,6 @@
 // ==== CONFIG (replace with your Supabase project values) ====
-const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co'; // TODO: replace with your Supabase project URL
-const SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY';        // TODO: replace with your Supabase anon key
+const SUPABASE_URL = 'https://utwaxmfardwfsfyyvdka.supabase.co'; // TODO: replace
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0d2F4bWZhcmR3ZnNmeXl2ZGthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxMDY2MzEsImV4cCI6MjA3OTY4MjYzMX0._bv2-Lx5KIbOUOneWmypFixyWy-LIm3rE_vpZNqneP0';        // TODO: replace
 
 // UMD build exposes global "supabase"
 const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
