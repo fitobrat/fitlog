@@ -1,7 +1,7 @@
 # FitLog PWA Enhancements Log
 
 ## Summary
-Enhanced the FitLog PWA with loading states, better error handling, input validation, a visual chart, and improved mobile UX.
+Enhanced the FitLog PWA with loading states, better error handling, input validation, a visual chart, improved mobile UX, and an animated pushup figure on the homepage.
 
 ---
 
@@ -154,10 +154,35 @@ Enhanced the FitLog PWA with loading states, better error handling, input valida
 
 ---
 
+## 6. Animated Pushup Figure ✅
+**What was done:**
+- Created a CSS-animated stick figure doing pushups
+- Placed prominently at the top of the homepage (right after the title)
+- Smooth, realistic pushup motion with proper arm bending
+- Stylized design matching the app's blue theme (#3b82f6)
+- Continuous loop animation (2.4s cycle)
+- Includes head, torso, arms, and legs with proper proportions
+- Ground shadow for depth
+
+**Files modified:**
+- `index.html`: Added pushup animation container with person structure
+- `style.css`: Added complete CSS animation with keyframes for pushup motion
+
+**Animation details:**
+- Person moves down and up in realistic pushup motion
+- Arms bend properly at the bottom of the pushup
+- Legs slightly adjust angle during motion
+- Head has simple eyes for character
+- Gradient colors matching app theme
+- Smooth easing for natural movement
+
+---
+
 ## Notes
 
 - Chart.js adds ~50KB to bundle (acceptable for the visual value)
 - All enhancements maintain vanilla JS (no frameworks)
 - Backward compatible with existing Supabase setup
 - No breaking changes to existing functionality
+- Pushup animation is pure CSS (no JavaScript, no external dependencies)
 
