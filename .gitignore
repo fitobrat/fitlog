@@ -1,0 +1,16 @@
+# Environment variables / config (if you create separate config files)
+.env
+config.js
+*.local.js
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
