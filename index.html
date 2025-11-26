@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>FitLog Community</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icons/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+  <link rel="shortcut icon" href="icons/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>FitLog</h1>
+
+  <section id="auth">
+    <input id="authEmail" type="email" placeholder="Email">
+    <input id="authPassword" type="password" placeholder="Password">
+    <button id="loginBtn">Log in</button>
+    <button id="logoutBtn">Log out</button>
+    <div id="authStatus"></div>
+  </section>
+
+  <section id="tracker">
+    <input id="nickname" type="text" placeholder="Your name (optional)">
+    <div class="item"><label>Pull-ups</label><input id="pullups" type="number" min="0"></div>
+    <div class="item"><label>Push-ups</label><input id="pushups" type="number" min="0"></div>
+    <div class="item"><label>Dips</label><input id="dips" type="number" min="0"></div>
+    <div class="item"><label>Run (km)</label><input id="run" type="number" step="0.01" min="0"></div>
+    <button id="saveBtn">Save</button>
+    <button id="resetBtn">Clear My Data</button>
+  </section>
+
+  <h2>Community Leaderboard</h2>
+  <div id="leaderboard">Loading…</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.2/dist/umd/supabase.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
