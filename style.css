@@ -1,8 +1,21 @@
-body{font-family:system-ui,sans-serif;margin:1rem;line-height:1.5}
-h1,h2{text-align:center}
-#tracker{max-width:420px;margin:auto}
-.item{display:flex;justify-content:space-between;margin:.4rem 0}
-label{flex:1}
-input{width:80px}
-button{margin:.3rem .2rem;padding:.5rem 1rem}
-#leaderboard div{margin:.3rem 0}
+body{font-family:system-ui,sans-serif;margin:0;line-height:1.5;background:linear-gradient(135deg,#0f172a,#1e293b);color:#e5e7eb;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+h1,h2{text-align:center;margin:0 0 .75rem}
+main{width:100%;max-width:460px;background:#020617cc;border-radius:18px;padding:1.25rem 1.5rem;box-shadow:0 18px 45px rgba(0,0,0,.55);backdrop-filter:blur(18px);border:1px solid #1f2937}
+#auth,#tracker{margin-bottom:1rem}
+#auth input,#tracker input{width:100%;box-sizing:border-box;margin:.25rem 0 .5rem;padding:.4rem .55rem;border-radius:8px;border:1px solid #4b5563;background:#020617;color:#e5e7eb}
+#auth input:focus,#tracker input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 1px #3b82f6}
+.auth-actions,.actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.35rem}
+.actions{justify-content:flex-end}
+button{flex:1 1 auto;cursor:pointer;border:none;border-radius:999px;padding:.45rem .9rem;font-weight:600;font-size:.9rem;transition:background .15s,transform .05s,box-shadow .15s}
+button#loginBtn,button#saveBtn{background:#3b82f6;color:white;box-shadow:0 4px 10px rgba(59,130,246,.35)}
+button#logoutBtn,button#resetBtn{background:#111827;color:#e5e7eb;border:1px solid #4b5563}
+button:hover{transform:translateY(-1px)}
+button:active{transform:translateY(0);box-shadow:none}
+#authStatus{font-size:.75rem;color:#9ca3af;margin-top:.2rem}
+.item{display:flex;justify-content:space-between;align-items:center;margin:.35rem 0;font-size:.9rem}
+.item label{flex:1;margin-right:.5rem}
+.item input{max-width:90px;text-align:right}
+#leaderboard{margin-top:.75rem;font-size:.9rem;border-top:1px solid #111827;padding-top:.5rem;max-height:260px;overflow-y:auto}
+#leaderboard div{margin:.25rem 0;padding:.3rem .4rem;border-radius:10px;background:#020617;border:1px solid #111827;display:flex;justify-content:space-between;align-items:center}
+#leaderboard strong{color:#f97316}
+@media (max-width:480px){main{padding:1rem 1.1rem}}

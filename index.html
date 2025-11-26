@@ -12,28 +12,34 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>FitLog</h1>
+  <main>
+    <h1>FitLog</h1>
 
-  <section id="auth">
-    <input id="authEmail" type="email" placeholder="Email">
-    <input id="authPassword" type="password" placeholder="Password">
-    <button id="loginBtn">Log in</button>
-    <button id="logoutBtn">Log out</button>
-    <div id="authStatus"></div>
-  </section>
+    <section id="auth">
+      <input id="authEmail" type="email" placeholder="Email">
+      <input id="authPassword" type="password" placeholder="Password">
+      <div class="auth-actions">
+        <button id="loginBtn">Log in</button>
+        <button id="logoutBtn">Log out</button>
+      </div>
+      <div id="authStatus"></div>
+    </section>
 
-  <section id="tracker">
-    <input id="nickname" type="text" placeholder="Your name (optional)">
-    <div class="item"><label>Pull-ups</label><input id="pullups" type="number" min="0"></div>
-    <div class="item"><label>Push-ups</label><input id="pushups" type="number" min="0"></div>
-    <div class="item"><label>Dips</label><input id="dips" type="number" min="0"></div>
-    <div class="item"><label>Run (km)</label><input id="run" type="number" step="0.01" min="0"></div>
-    <button id="saveBtn">Save</button>
-    <button id="resetBtn">Clear My Data</button>
-  </section>
+    <section id="tracker">
+      <input id="nickname" type="text" placeholder="Your name (optional)">
+      <div class="item"><label>Pull-ups</label><input id="pullups" type="number" min="0"></div>
+      <div class="item"><label>Push-ups</label><input id="pushups" type="number" min="0"></div>
+      <div class="item"><label>Dips</label><input id="dips" type="number" min="0"></div>
+      <div class="item"><label>Run (km)</label><input id="run" type="number" step="0.01" min="0"></div>
+      <div class="actions">
+        <button id="saveBtn">Save</button>
+        <button id="resetBtn">Clear My Data</button>
+      </div>
+    </section>
 
-  <h2>Community Leaderboard</h2>
-  <div id="leaderboard">Loading…</div>
+    <h2>Community Leaderboard</h2>
+    <div id="leaderboard">Loading…</div>
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.2/dist/umd/supabase.min.js"></script>
   <script src="app.js"></script>
