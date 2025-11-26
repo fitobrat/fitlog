@@ -39,9 +39,14 @@
 
     <h2>Community Leaderboard</h2>
     <div id="leaderboard">Loading…</div>
+    <div id="chartContainer" style="margin-top: 1rem; display: none;">
+      <canvas id="chartCanvas"></canvas>
+    </div>
+    <div id="message" class="message"></div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
