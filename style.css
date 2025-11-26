@@ -1,25 +1,55 @@
 body{font-family:system-ui,sans-serif;margin:0;line-height:1.5;background:linear-gradient(135deg,#0f172a,#1e293b);color:#e5e7eb;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
 h1,h2{text-align:center;margin:0 0 .75rem}
-.pushup-animation{display:flex;justify-content:center;align-items:center;margin:1.5rem 0 2rem;height:160px;position:relative;overflow:hidden}
-.person{position:relative;width:100px;height:140px;animation:pushup 2.4s ease-in-out infinite}
-@keyframes pushup{0%{transform:translateY(0)}45%{transform:translateY(28px)}55%{transform:translateY(28px)}100%{transform:translateY(0)}}
-.head{width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:50%;position:absolute;top:0;left:50%;transform:translateX(-50%);box-shadow:0 3px 10px rgba(59,130,246,.5),inset 0 -2px 0 rgba(37,99,235,.3);z-index:3}
-.head::before{content:'';position:absolute;width:6px;height:6px;background:#e5e7eb;border-radius:50%;top:8px;left:7px;box-shadow:12px 0 0 #e5e7eb}
-.body{position:absolute;top:28px;left:50%;transform:translateX(-50%);width:36px;height:60px}
-.torso{width:36px;height:48px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:10px 10px 6px 6px;position:relative;box-shadow:0 5px 15px rgba(59,130,246,.4),inset 0 2px 0 rgba(255,255,255,.1);z-index:2}
-.arm{width:7px;height:42px;background:linear-gradient(135deg,#2563eb,#1e40af);border-radius:4px;position:absolute;top:10px;transform-origin:top center;box-shadow:0 2px 6px rgba(30,64,175,.3)}
-.arm-left{left:-10px;transform:rotate(-20deg);animation:armLeft 2.4s ease-in-out infinite}
-.arm-right{right:-10px;transform:rotate(20deg);animation:armRight 2.4s ease-in-out infinite}
-@keyframes armLeft{0%{transform:rotate(-20deg) translateY(0)}45%{transform:rotate(-8deg) translateY(12px)}55%{transform:rotate(-8deg) translateY(12px)}100%{transform:rotate(-20deg) translateY(0)}}
-@keyframes armRight{0%{transform:rotate(20deg) translateY(0)}45%{transform:rotate(8deg) translateY(12px)}55%{transform:rotate(8deg) translateY(12px)}100%{transform:rotate(20deg) translateY(0)}}
-.legs{position:absolute;top:76px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:1}
-.leg{width:10px;height:50px;background:linear-gradient(135deg,#2563eb,#1e40af);border-radius:5px;position:relative;box-shadow:0 2px 6px rgba(30,64,175,.3)}
-.leg-left{animation:legLeft 2.4s ease-in-out infinite}
-.leg-right{animation:legRight 2.4s ease-in-out infinite}
-@keyframes legLeft{0%,100%{transform:translateY(0) rotate(0deg)}45%{transform:translateY(6px) rotate(3deg)}55%{transform:translateY(6px) rotate(3deg)}}
-@keyframes legRight{0%,100%{transform:translateY(0) rotate(0deg)}45%{transform:translateY(6px) rotate(-3deg)}55%{transform:translateY(6px) rotate(-3deg)}}
-.ground{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);width:140px;height:6px;background:linear-gradient(90deg,transparent,rgba(75,85,99,.8) 15%,rgba(75,85,99,.8) 85%,transparent);border-radius:3px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-main{width:100%;max-width:460px;background:#020617cc;border-radius:18px;padding:1.25rem 1.5rem;box-shadow:0 18px 45px rgba(0,0,0,.55);backdrop-filter:blur(18px);border:1px solid #1f2937}
+h3{margin:.75rem 0 .5rem;font-size:1rem;color:#e5e7eb}
+
+/* Navigation Tabs */
+.tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #1f2937;padding-bottom:.5rem}
+.tab-btn{flex:1;padding:.6rem 1rem;background:transparent;border:none;border-radius:8px 8px 0 0;color:#9ca3af;font-weight:500;cursor:pointer;transition:all .2s;font-size:.9rem}
+.tab-btn:hover{background:#1f2937;color:#e5e7eb}
+.tab-btn.active{background:#3b82f6;color:white;box-shadow:0 2px 8px rgba(59,130,246,.4)}
+
+/* Pages */
+.page{display:none}
+.page.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+main{width:100%;max-width:600px;background:#020617cc;border-radius:18px;padding:1.25rem 1.5rem;box-shadow:0 18px 45px rgba(0,0,0,.55);backdrop-filter:blur(18px);border:1px solid #1f2937}
+
+/* Enhanced Pull-up Animation */
+.pullup-animation{display:flex;justify-content:center;align-items:flex-start;margin:2rem 0 2.5rem;height:280px;position:relative;overflow:visible}
+.bar{position:absolute;top:0;left:50%;transform:translateX(-50%);width:200px;height:8px;background:linear-gradient(90deg,#fbbf24,#f59e0b);border-radius:4px;box-shadow:0 4px 15px rgba(251,191,36,.6),inset 0 2px 0 rgba(255,255,255,.2);z-index:10}
+.person{position:relative;width:140px;height:260px;animation:pullup 2.2s ease-in-out infinite;transform-origin:top center}
+@keyframes pullup{0%{transform:translateY(0) rotate(0deg)}30%{transform:translateY(-45px) rotate(-2deg)}50%{transform:translateY(-50px) rotate(-2deg)}70%{transform:translateY(-45px) rotate(-2deg)}100%{transform:translateY(0) rotate(0deg)}}
+
+.head{width:36px;height:36px;background:linear-gradient(135deg,#fbbf24,#f59e0b);border-radius:50%;position:absolute;top:8px;left:50%;transform:translateX(-50%);box-shadow:0 4px 12px rgba(251,191,36,.6),inset 0 -3px 0 rgba(217,119,6,.4);z-index:5}
+.head::before{content:'';position:absolute;width:8px;height:8px;background:#1f2937;border-radius:50%;top:10px;left:9px;box-shadow:14px 0 0 #1f2937}
+
+.body{position:absolute;top:44px;left:50%;transform:translateX(-50%);width:50px;height:90px}
+.shoulder{width:20px;height:12px;background:linear-gradient(135deg,#f97316,#ea580c);border-radius:6px;position:absolute;top:0;box-shadow:0 2px 6px rgba(249,115,22,.4)}
+.shoulder-left{left:0;transform:rotate(-5deg)}
+.shoulder-right{right:0;transform:rotate(5deg)}
+.chest{width:42px;height:28px;background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:8px 8px 4px 4px;position:absolute;top:12px;left:50%;transform:translateX(-50%);box-shadow:0 3px 10px rgba(239,68,68,.5),inset 0 2px 0 rgba(255,255,255,.1)}
+.abs{width:38px;height:20px;background:linear-gradient(135deg,#10b981,#059669);border-radius:4px;position:absolute;top:40px;left:50%;transform:translateX(-50%);box-shadow:0 2px 8px rgba(16,185,129,.4),inset 0 1px 0 rgba(255,255,255,.1)}
+
+.arm{position:absolute;top:8px;transform-origin:top center}
+.arm-left{left:-18px;animation:armPullLeft 2.2s ease-in-out infinite}
+.arm-right{right:-18px;animation:armPullRight 2.2s ease-in-out infinite}
+.bicep{width:14px;height:50px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:7px;position:relative;box-shadow:0 3px 8px rgba(59,130,246,.5),inset 0 2px 0 rgba(255,255,255,.1)}
+.bicep::after{content:'';position:absolute;width:10px;height:8px;background:#2563eb;border-radius:0 0 5px 5px;bottom:-2px;left:2px}
+.forearm{width:12px;height:45px;background:linear-gradient(135deg,#2563eb,#1e40af);border-radius:6px;position:absolute;top:48px;left:1px;box-shadow:0 2px 6px rgba(30,64,175,.4)}
+@keyframes armPullLeft{0%{transform:rotate(-25deg) translateY(0)}30%{transform:rotate(-5deg) translateY(-8px)}50%{transform:rotate(-3deg) translateY(-10px)}70%{transform:rotate(-5deg) translateY(-8px)}100%{transform:rotate(-25deg) translateY(0)}}
+@keyframes armPullRight{0%{transform:rotate(25deg) translateY(0)}30%{transform:rotate(5deg) translateY(-8px)}50%{transform:rotate(3deg) translateY(-10px)}70%{transform:rotate(5deg) translateY(-8px)}100%{transform:rotate(25deg) translateY(0)}}
+
+.legs{position:absolute;top:130px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:1}
+.leg{position:relative}
+.thigh{width:16px;height:60px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);border-radius:8px;position:relative;box-shadow:0 3px 8px rgba(139,92,246,.5),inset 0 2px 0 rgba(255,255,255,.1)}
+.calf{width:14px;height:50px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:7px;position:absolute;top:58px;left:1px;box-shadow:0 2px 6px rgba(109,40,217,.4)}
+.leg-left{animation:legLeft 2.2s ease-in-out infinite}
+.leg-right{animation:legRight 2.2s ease-in-out infinite}
+@keyframes legLeft{0%,100%{transform:translateY(0) rotate(0deg)}30%{transform:translateY(-3px) rotate(2deg)}50%{transform:translateY(-4px) rotate(2deg)}70%{transform:translateY(-3px) rotate(2deg)}}
+@keyframes legRight{0%,100%{transform:translateY(0) rotate(0deg)}30%{transform:translateY(-3px) rotate(-2deg)}50%{transform:translateY(-4px) rotate(-2deg)}70%{transform:translateY(-3px) rotate(-2deg)}
+
+/* Auth & Tracker */
 #auth,#tracker{margin-bottom:1rem}
 #auth input,#tracker input{width:100%;box-sizing:border-box;margin:.25rem 0 .5rem;padding:.4rem .55rem;border-radius:8px;border:1px solid #4b5563;background:#020617;color:#e5e7eb}
 #auth input:focus,#tracker input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 1px #3b82f6}
@@ -49,4 +79,18 @@ button.loading::after{content:'';position:absolute;width:16px;height:16px;top:50
 @keyframes slideUp{from{opacity:1;transform:translateX(-50%) translateY(0)}to{opacity:0;transform:translateX(-50%) translateY(-20px)}}
 #chartContainer{background:#020617;border-radius:10px;padding:1rem;border:1px solid #111827;margin-top:1rem}
 #chartContainer canvas{max-height:300px}
-@media (max-width:480px){main{padding:1rem 1.1rem};button{min-height:48px;padding:.65rem 1.1rem};#auth input,#tracker input{min-height:44px;font-size:16px}}
+
+/* Dashboard Styles */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin:1.5rem 0}
+.stat-card{background:#020617;border:1px solid #111827;border-radius:12px;padding:1rem;text-align:center}
+.stat-value{font-size:2rem;font-weight:700;color:#3b82f6;margin:.5rem 0}
+.stat-label{font-size:.85rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px}
+.chart-section{background:#020617;border:1px solid #111827;border-radius:12px;padding:1.25rem;margin:1.5rem 0}
+.chart-section canvas{max-height:300px}
+
+/* Settings Styles */
+.settings-section{background:#020617;border:1px solid #111827;border-radius:12px;padding:1.25rem;margin:1.5rem 0}
+.settings-section p{color:#9ca3af;font-size:.9rem;margin:.5rem 0 1rem}
+#accountInfo{color:#9ca3af;font-size:.9rem}
+
+@media (max-width:480px){main{padding:1rem 1.1rem};button{min-height:48px;padding:.65rem 1.1rem};#auth input,#tracker input{min-height:44px;font-size:16px};.pullup-animation{height:240px};.person{width:120px;height:220px}}

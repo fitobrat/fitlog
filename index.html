@@ -15,49 +15,119 @@
   <main>
     <h1>FitLog</h1>
     
-    <div class="pushup-animation">
-      <div class="person">
-        <div class="head"></div>
-        <div class="body">
-          <div class="arm arm-left"></div>
-          <div class="torso"></div>
-          <div class="arm arm-right"></div>
+    <!-- Navigation Tabs -->
+    <nav class="tabs">
+      <button class="tab-btn active" data-page="homepage">Home</button>
+      <button class="tab-btn" data-page="dashboard">Dashboard</button>
+      <button class="tab-btn" data-page="settings">Settings</button>
+    </nav>
+
+    <!-- Homepage Page -->
+    <div id="homepage" class="page active">
+      <div class="pullup-animation">
+        <div class="person">
+          <div class="head"></div>
+          <div class="body">
+            <div class="shoulder shoulder-left"></div>
+            <div class="shoulder shoulder-right"></div>
+            <div class="chest"></div>
+            <div class="abs"></div>
+            <div class="arm arm-left">
+              <div class="bicep"></div>
+              <div class="forearm"></div>
+            </div>
+            <div class="arm arm-right">
+              <div class="bicep"></div>
+              <div class="forearm"></div>
+            </div>
+          </div>
+          <div class="legs">
+            <div class="leg leg-left">
+              <div class="thigh"></div>
+              <div class="calf"></div>
+            </div>
+            <div class="leg leg-right">
+              <div class="thigh"></div>
+              <div class="calf"></div>
+            </div>
+          </div>
         </div>
-        <div class="legs">
-          <div class="leg leg-left"></div>
-          <div class="leg leg-right"></div>
-        </div>
+        <div class="bar"></div>
       </div>
-      <div class="ground"></div>
+
+      <section id="auth">
+        <input id="authUsername" type="text" placeholder="Username" autocomplete="username">
+        <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password">
+        <div class="auth-actions">
+          <button id="loginBtn">Log in</button>
+          <button id="logoutBtn">Log out</button>
+        </div>
+        <div id="authStatus"></div>
+        <div style="font-size:0.7rem;color:#6b7280;margin-top:0.3rem">Username format: yourname (no @ required)</div>
+      </section>
+
+      <section id="tracker">
+        <input id="nickname" type="text" placeholder="Your name (optional)">
+        <div class="item"><label>Pull-ups</label><input id="pullups" type="number" min="0"></div>
+        <div class="item"><label>Push-ups</label><input id="pushups" type="number" min="0"></div>
+        <div class="item"><label>Dips</label><input id="dips" type="number" min="0"></div>
+        <div class="item"><label>Run (km)</label><input id="run" type="number" step="0.01" min="0"></div>
+        <div class="actions">
+          <button id="saveBtn">Save</button>
+          <button id="resetBtn">Clear My Data</button>
+        </div>
+      </section>
+
+      <h2>Community Leaderboard</h2>
+      <div id="leaderboard">Loading…</div>
+      <div id="chartContainer" style="margin-top: 1rem; display: none;">
+        <canvas id="chartCanvas"></canvas>
+      </div>
     </div>
 
-    <section id="auth">
-      <input id="authEmail" type="email" placeholder="Email">
-      <input id="authPassword" type="password" placeholder="Password">
-      <div class="auth-actions">
-        <button id="loginBtn">Log in</button>
-        <button id="logoutBtn">Log out</button>
+    <!-- Dashboard Page -->
+    <div id="dashboard" class="page">
+      <h2>Training Dashboard</h2>
+      <div id="dashboardStats" class="stats-grid"></div>
+      <div class="chart-section">
+        <h3>Your Progress Over Time</h3>
+        <canvas id="progressChart"></canvas>
       </div>
-      <div id="authStatus"></div>
-    </section>
-
-    <section id="tracker">
-      <input id="nickname" type="text" placeholder="Your name (optional)">
-      <div class="item"><label>Pull-ups</label><input id="pullups" type="number" min="0"></div>
-      <div class="item"><label>Push-ups</label><input id="pushups" type="number" min="0"></div>
-      <div class="item"><label>Dips</label><input id="dips" type="number" min="0"></div>
-      <div class="item"><label>Run (km)</label><input id="run" type="number" step="0.01" min="0"></div>
-      <div class="actions">
-        <button id="saveBtn">Save</button>
-        <button id="resetBtn">Clear My Data</button>
+      <div class="chart-section">
+        <h3>Exercise Distribution</h3>
+        <canvas id="exerciseChart"></canvas>
       </div>
-    </section>
-
-    <h2>Community Leaderboard</h2>
-    <div id="leaderboard">Loading…</div>
-    <div id="chartContainer" style="margin-top: 1rem; display: none;">
-      <canvas id="chartCanvas"></canvas>
+      <div class="chart-section">
+        <h3>Community Comparison</h3>
+        <canvas id="comparisonChart"></canvas>
+      </div>
+      <div class="chart-section">
+        <h3>Weekly Trends</h3>
+        <canvas id="weeklyChart"></canvas>
+      </div>
     </div>
+
+    <!-- Settings Page -->
+    <div id="settings" class="page">
+      <h2>Settings</h2>
+      <section class="settings-section">
+        <h3>Data Export</h3>
+        <p>Export your progress data as CSV file</p>
+        <button id="exportBtn">Export to CSV</button>
+      </section>
+      <section class="settings-section">
+        <h3>Data Import</h3>
+        <p>Import progress data from CSV file</p>
+        <input type="file" id="importFile" accept=".csv" style="display:none">
+        <button id="importBtn">Import from CSV</button>
+        <div id="importStatus"></div>
+      </section>
+      <section class="settings-section">
+        <h3>Account</h3>
+        <div id="accountInfo"></div>
+      </section>
+    </div>
+
     <div id="message" class="message"></div>
   </main>
 

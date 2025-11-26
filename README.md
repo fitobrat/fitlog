@@ -104,7 +104,12 @@ This keeps the public leaderboard, but only logged-in users can change data.
 
 1. **Enable Email auth**
    - In Supabase: **Authentication → Providers → Email** → enable.
-2. **Update policies (replace the ones in step 4)**
+2. **Create users with username format**
+   - When creating users in Supabase dashboard (Authentication → Users → Invite user), use format: `username@fitlog.local`
+   - Example: `john@fitlog.local`, `sarah@fitlog.local`
+   - Users will log in with just `john` or `sarah` (no @ required in the app)
+   - The app automatically converts usernames to this format for Supabase
+3. **Update policies (replace the ones in step 4)**
 
 ```sql
 -- anyone can read leaderboard

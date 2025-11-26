@@ -30,25 +30,50 @@ function setButtonLoading(buttonId, isLoading) {
   }
 }
 
+// ==== USERNAME HELPER ====
+// Convert username to email format for Supabase (username@fitlog.local)
+function usernameToEmail(username) {
+  const clean = username.trim().toLowerCase();
+  // If it already has @, use as-is, otherwise add @fitlog.local
+  return clean.includes('@') ? clean : `${clean}@fitlog.local`;
+}
+
+// Extract username from email (for display)
+function emailToUsername(email) {
+  if (!email) return '';
+  const parts = email.split('@');
+  // If it's our fake domain, return just the username part
+  if (parts[1] === 'fitlog.local') {
+    return parts[0];
+  }
+  // Otherwise return the email as-is (for real emails)
+  return email;
+}
+
 // ==== AUTH HELPERS ====
 async function updateAuthStatus() {
   const el = document.getElementById('authStatus');
   if (!el) return;
   const { data: { user } = {} } = await client.auth.getUser();
   if (user) {
-    el.textContent = 'Signed in as ' + (user.email || user.id);
+    const displayName = emailToUsername(user.email || user.id);
+    el.textContent = 'Signed in as ' + displayName;
   } else {
     el.textContent = 'Not signed in (read-only)';
   }
 }
 
 async function logIn() {
-  const email = document.getElementById('authEmail').value.trim();
+  const username = document.getElementById('authUsername').value.trim();
   const password = document.getElementById('authPassword').value;
-  if (!email || !password) {
-    showMessage('Please enter both email and password.', 'error');
+  if (!username || !password) {
+    showMessage('Please enter both username and password.', 'error');
     return;
   }
+  
+  // Convert username to email format for Supabase
+  const email = usernameToEmail(username);
+  
   setButtonLoading('loginBtn', true);
   const { error } = await client.auth.signInWithPassword({ email, password });
   setButtonLoading('loginBtn', false);
@@ -56,7 +81,15 @@ async function logIn() {
     showMessage(error.message || 'Login failed. Check your credentials.', 'error');
   } else {
     showMessage('Logged in successfully!', 'success');
-    document.getElementById('authEmail').value = '';
+    // Auto-fill nickname with username if empty
+    const nicknameField = document.getElementById('nickname');
+    if (nicknameField && !nicknameField.value.trim()) {
+      const { data: { user } = {} } = await client.auth.getUser();
+      if (user) {
+        nicknameField.value = emailToUsername(user.email);
+      }
+    }
+    document.getElementById('authUsername').value = '';
     document.getElementById('authPassword').value = '';
   }
   await updateAuthStatus();
@@ -265,12 +298,300 @@ function subscribeRealtime() {
     .subscribe();
 }
 
+// ==== NAVIGATION ====
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(pageId)?.classList.add('active');
+  document.querySelector(`[data-page="${pageId}"]`)?.classList.add('active');
+  
+  if (pageId === 'dashboard') {
+    loadDashboard();
+  } else if (pageId === 'settings') {
+    loadSettings();
+  }
+}
+
+// ==== DASHBOARD ====
+let dashboardCharts = {};
+
+async function loadDashboard() {
+  const { data: { user } = {} } = await client.auth.getUser();
+  if (!user) {
+    document.getElementById('dashboardStats').innerHTML = '<p style="text-align:center;color:#9ca3af">Please log in to view your dashboard</p>';
+    return;
+  }
+
+  const clientId = getClientId();
+  const { data: allData } = await client.from('progress').select('*');
+  const myData = allData?.find(d => d.id === clientId) || {};
+  const allUsers = allData || [];
+
+  // Stats Cards
+  const totalReps = (myData.pullups || 0) + (myData.pushups || 0) + (myData.dips || 0);
+  const avgReps = allUsers.length > 0 
+    ? Math.round(allUsers.reduce((sum, u) => sum + (u.pullups || 0) + (u.pushups || 0) + (u.dips || 0), 0) / allUsers.length)
+    : 0;
+  const myRank = allUsers.sort((a, b) => 
+    ((b.pullups || 0) + (b.pushups || 0) + (b.dips || 0)) - 
+    ((a.pullups || 0) + (a.pushups || 0) + (a.dips || 0))
+  ).findIndex(u => u.id === clientId) + 1;
+
+  document.getElementById('dashboardStats').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Your Total Reps</div>
+      <div class="stat-value">${totalReps}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Community Avg</div>
+      <div class="stat-value">${avgReps}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Your Rank</div>
+      <div class="stat-value">#${myRank || 'N/A'}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Users</div>
+      <div class="stat-value">${allUsers.length}</div>
+    </div>
+  `;
+
+  // Progress Chart (over time - simplified as we don't have history)
+  renderProgressChart(myData, allUsers);
+  renderExerciseChart(myData);
+  renderComparisonChart(myData, allUsers);
+  renderWeeklyChart(allUsers);
+}
+
+function renderProgressChart(myData, allUsers) {
+  const ctx = document.getElementById('progressChart');
+  if (!ctx) return;
+  if (dashboardCharts.progress) dashboardCharts.progress.destroy();
+
+  dashboardCharts.progress = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Pull-ups', 'Push-ups', 'Dips', 'Run (km)'],
+      datasets: [{
+        label: 'Your Stats',
+        data: [myData.pullups || 0, myData.pushups || 0, myData.dips || 0, (myData.run_km || 0) * 10],
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        tension: 0.4
+      }, {
+        label: 'Community Avg',
+        data: [
+          allUsers.reduce((s, u) => s + (u.pullups || 0), 0) / Math.max(allUsers.length, 1),
+          allUsers.reduce((s, u) => s + (u.pushups || 0), 0) / Math.max(allUsers.length, 1),
+          allUsers.reduce((s, u) => s + (u.dips || 0), 0) / Math.max(allUsers.length, 1),
+          (allUsers.reduce((s, u) => s + (u.run_km || 0), 0) / Math.max(allUsers.length, 1)) * 10
+        ],
+        borderColor: '#f97316',
+        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#e5e7eb' } } },
+      scales: {
+        y: { beginAtZero: true, ticks: { color: '#9ca3af' }, grid: { color: '#1f2937' } },
+        x: { ticks: { color: '#9ca3af' }, grid: { color: '#1f2937' } }
+      }
+    }
+  });
+}
+
+function renderExerciseChart(myData) {
+  const ctx = document.getElementById('exerciseChart');
+  if (!ctx) return;
+  if (dashboardCharts.exercise) dashboardCharts.exercise.destroy();
+
+  const total = (myData.pullups || 0) + (myData.pushups || 0) + (myData.dips || 0);
+  dashboardCharts.exercise = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Pull-ups', 'Push-ups', 'Dips'],
+      datasets: [{
+        data: [myData.pullups || 0, myData.pushups || 0, myData.dips || 0],
+        backgroundColor: ['#3b82f6', '#f97316', '#10b981'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#e5e7eb', padding: 15 } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
+              return `${ctx.label}: ${ctx.parsed} (${pct}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderComparisonChart(myData, allUsers) {
+  const ctx = document.getElementById('comparisonChart');
+  if (!ctx) return;
+  if (dashboardCharts.comparison) dashboardCharts.comparison.destroy();
+
+  const topUsers = [...allUsers].sort((a, b) => 
+    ((b.pullups || 0) + (b.pushups || 0) + (b.dips || 0)) - 
+    ((a.pullups || 0) + (a.pushups || 0) + (a.dips || 0))
+  ).slice(0, 5);
+
+  dashboardCharts.comparison = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: topUsers.map(u => u.name || 'Anonymous'),
+      datasets: [{
+        label: 'Total Reps',
+        data: topUsers.map(u => (u.pullups || 0) + (u.pushups || 0) + (u.dips || 0)),
+        backgroundColor: topUsers.map(u => u.id === getClientId() ? '#3b82f6' : '#6b7280')
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { color: '#9ca3af' }, grid: { color: '#1f2937' } },
+        x: { ticks: { color: '#9ca3af', maxRotation: 45 }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+function renderWeeklyChart(allUsers) {
+  const ctx = document.getElementById('weeklyChart');
+  if (!ctx) return;
+  if (dashboardCharts.weekly) dashboardCharts.weekly.destroy();
+
+  // Simplified: show distribution of activity levels
+  const levels = [0, 10, 25, 50, 100, 200];
+  const counts = levels.map((level, i) => 
+    allUsers.filter(u => {
+      const total = (u.pullups || 0) + (u.pushups || 0) + (u.dips || 0);
+      return i === levels.length - 1 ? total >= level : total >= level && total < levels[i + 1];
+    }).length
+  );
+
+  dashboardCharts.weekly = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['0-9', '10-24', '25-49', '50-99', '100-199', '200+'],
+      datasets: [{
+        label: 'Users',
+        data: counts,
+        backgroundColor: '#3b82f6'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { color: '#9ca3af', stepSize: 1 }, grid: { color: '#1f2937' } },
+        x: { ticks: { color: '#9ca3af' }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+// ==== SETTINGS ====
+async function loadSettings() {
+  const { data: { user } = {} } = await client.auth.getUser();
+  const accountInfo = document.getElementById('accountInfo');
+  if (user) {
+    accountInfo.innerHTML = `
+      <p><strong>Username:</strong> ${emailToUsername(user.email)}</p>
+      <p><strong>User ID:</strong> ${user.id.substring(0, 8)}...</p>
+    `;
+  } else {
+    accountInfo.innerHTML = '<p>Not logged in</p>';
+  }
+}
+
+function exportToCSV() {
+  const clientId = getClientId();
+  client.from('progress').select('*').eq('id', clientId).single().then(({ data }) => {
+    if (!data) {
+      showMessage('No data to export', 'error');
+      return;
+    }
+    const csv = `name,pullups,pushups,dips,run_km,created_at\n${data.name || 'Anonymous'},${data.pullups || 0},${data.pushups || 0},${data.dips || 0},${data.run_km || 0},${data.created_at || ''}`;
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `fitlog-export-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showMessage('Data exported successfully!', 'success');
+  });
+}
+
+function importFromCSV() {
+  const fileInput = document.getElementById('importFile');
+  fileInput.click();
+  fileInput.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target.result;
+      const lines = text.split('\n');
+      if (lines.length < 2) {
+        showMessage('Invalid CSV format', 'error');
+        return;
+      }
+      const headers = lines[0].split(',');
+      const data = lines[1].split(',');
+      const payload = {
+        id: getClientId(),
+        name: data[0] || 'Anonymous',
+        pullups: parseInt(data[1]) || 0,
+        pushups: parseInt(data[2]) || 0,
+        dips: parseInt(data[3]) || 0,
+        run_km: parseFloat(data[4]) || 0
+      };
+      client.from('progress').upsert(payload, { onConflict: 'id' }).then(({ error }) => {
+        if (error) {
+          showMessage('Import failed: ' + error.message, 'error');
+        } else {
+          showMessage('Data imported successfully!', 'success');
+          document.getElementById('nickname').value = payload.name;
+          document.getElementById('pullups').value = payload.pullups;
+          document.getElementById('pushups').value = payload.pushups;
+          document.getElementById('dips').value = payload.dips;
+          document.getElementById('run').value = payload.run_km;
+          loadAll();
+        }
+      });
+    };
+    reader.readAsText(file);
+  };
+}
+
 // ==== EVENT LISTENERS & STARTUP ====
 window.addEventListener('DOMContentLoaded', () => {
+  // Navigation
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => showPage(btn.dataset.page));
+  });
+
+  // Existing event listeners
   document.getElementById('saveBtn').addEventListener('click', upsertMyProgress);
   document.getElementById('resetBtn').addEventListener('click', clearMyData);
   document.getElementById('loginBtn').addEventListener('click', logIn);
   document.getElementById('logoutBtn').addEventListener('click', logOut);
+  
+  // CSV Export/Import
+  document.getElementById('exportBtn').addEventListener('click', exportToCSV);
+  document.getElementById('importBtn').addEventListener('click', importFromCSV);
   
   // Input validation on blur
   ['pullups', 'pushups', 'dips', 'run'].forEach(id => {
@@ -287,6 +608,11 @@ window.addEventListener('DOMContentLoaded', () => {
   
   // Enter key to submit login
   document.getElementById('authPassword')?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') logIn();
+  });
+  
+  // Also allow Enter on username field
+  document.getElementById('authUsername')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') logIn();
   });
   
